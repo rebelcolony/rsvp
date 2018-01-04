@@ -5,6 +5,8 @@ import GuestList from './GuestList'
 class App extends Component {
 
   state = {
+    isFiltered: false,
+    pendingGuest: '',
     guests: [
       {
         name: 'Treasure',
@@ -37,15 +39,34 @@ class App extends Component {
       })
     });
 
+  setNameAt = (name, indexToChange) =>
+    this.setState({
+      guests: this.state.guests.map((guest, index) => {
+        if (index === indexToChange) {
+          return {
+            ...guest,
+            name
+          };
+        }
+        return guest;
+      })
+    });
+
   toggleConfirmationAt = index =>
     this.toggleGuestPropertyAt("isConfirmed", index);
 
   toggleEditingAt = index =>
     this.toggleGuestPropertyAt("isEditing", index);
 
+  toggleFilter = () =>
+    this.setState({ isFiltered: !this.state.isFiltered });
+
   getTotalInvited = () => this.state.guests.length;
   // getAttendingGuests = () =>
   // getUncomfirmedGuests = () =>
+
+  setPendingGuest = (guestName) =>
+    this.setState({ pendingGuest: guestName})
 
   render() {
     return (
@@ -54,15 +75,23 @@ class App extends Component {
           <h1>RSVP</h1>
           <p>A Treehouse App</p>
           <form>
-              <input type="text" value="Safia" placeholder="Invite Someone" />
-              <button type="submit" name="submit" value="submit">Submit</button>
+            <input
+              type="text"
+              placeholder="Type to invite someone..."
+              onChange={this.setPendingGuest}
+            />
+            <button type="submit" name="submit" value="submit">Submit</button>
           </form>
         </header>
         <div className="main">
           <div>
             <h2>Invitees</h2>
             <label>
-              <input type="checkbox" /> Hide those who haven't responded
+              <input
+                type="checkbox"
+                onChange={this.toggleFilter}
+                checked={this.state.isFiltered}
+              /> Hide those who haven't responded
             </label>
           </div>
           <table className="counter">
@@ -85,6 +114,8 @@ class App extends Component {
             guests={this.state.guests}
             toggleConfirmationAt={this.toggleConfirmationAt}
             toggleEditingAt={this.toggleEditingAt}
+            setNameAt={this.setNameAt}
+            isFiltered={this.state.isFiltered}
            />
         </div>
       </div>
